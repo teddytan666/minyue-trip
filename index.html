@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Cache-Control" content="no-cache" />
+<meta http-equiv="Pragma" content="no-cache" />
 <title>麻将天团 · 泉州/石狮/汕头/潮州</title>
 <style>
   :root{
@@ -642,15 +644,21 @@ document.querySelectorAll('.tab').forEach(function(t){
 });
 showCity('quanzhou');
 
-/* 实时定位：地图右下角定位按钮，点一下用手机GPS显示"你在哪"（蓝点+精度圈） */
-AMap.plugin('AMap.Geolocation',function(){
-  var geo=new AMap.Geolocation({
-    enableHighAccuracy:true, timeout:10000,
-    showButton:true, buttonPosition:'RB', buttonOffset:new AMap.Pixel(12,20),
-    showMarker:true, showCircle:true, panToLocation:true, zoomToAccuracy:true, GeoLocationFirst:true
-  });
-  map.addControl(geo);
-});
+/* 实时定位：地图右下角定位按钮，点一下用手机GPS显示"你在哪"（蓝点+精度圈）。全程 try/catch，插件异常绝不连累地图 */
+try{
+  if(window.AMap && AMap.plugin){
+    AMap.plugin('AMap.Geolocation',function(){
+      try{
+        var geo=new AMap.Geolocation({
+          enableHighAccuracy:true, timeout:10000,
+          showButton:true, buttonPosition:'RB', buttonOffset:new AMap.Pixel(12,20),
+          showMarker:true, showCircle:true, panToLocation:true, zoomToAccuracy:true
+        });
+        map.addControl(geo);
+      }catch(e){}
+    });
+  }
+}catch(e){}
 
 /* 大部分图片已内嵌(data:)，瞬间显示；少数仍为在线图，页面加载后后台预取以加速悬停 */
 setTimeout(function(){
