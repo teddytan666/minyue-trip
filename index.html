@@ -92,7 +92,7 @@
     html,body{height:100%;overflow:hidden}
     .app{flex-direction:column;height:100vh;height:100dvh;overflow:hidden}
     /* 上方地图：固定高度、不随页面滚动 */
-    .right{order:1;height:55vh;flex:none;display:flex;flex-direction:column;min-height:0}
+    .right{order:1;height:44vh;flex:none;display:flex;flex-direction:column;min-height:0}
     #map{flex:1;min-height:0;height:auto}
     /* 下方行程：占剩余约 45%，仅此区域内部滚动 */
     .left{order:2;flex:1;min-height:0;width:100%;max-width:none;border-right:none;border-top:1px solid var(--line)}
@@ -104,11 +104,9 @@
   <!-- ===== 左侧行程 ===== -->
   <aside class="left">
     <div class="brand">
-      <h1>闽粤 6 日游</h1>
-      <div class="route">
-        <b>广州东</b> → 泉州 → 石狮 → 泉州古城 → <b>汕头</b> → 潮州 → <b>广州南</b><br>
-        2026/07/07（周二）– 07/12（周日）· 一群朋友
-      </div>
+      <div class="route" style="margin-top:0">2026/07/07（周二）– 07/12（周日）· <b>麻将天团</b></div>
+      <h1 style="margin-top:6px">闽粤 6 日游</h1>
+      <div class="route"><b>广州东</b> → 泉州 → 石狮 → 泉州古城 → <b>汕头</b> → 潮州 → <b>广州南</b></div>
     </div>
     <div class="itin" id="itin"></div>
   </aside>
