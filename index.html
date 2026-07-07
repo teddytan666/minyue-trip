@@ -584,7 +584,7 @@ window.addEventListener('load',function(){setTimeout(function(){map.resize();},1
 setTimeout(function(){map.resize();},400);
 
 /* 悬停信息卡（自定义 InfoWindow，无默认边框） */
-var info=new AMap.InfoWindow({isCustom:true,autoMove:true,offset:new AMap.Pixel(0,-16)});
+var info=new AMap.InfoWindow({isCustom:true,autoMove:false,offset:new AMap.Pixel(0,-16)});
 window.__closeInfo=function(){try{info.close();}catch(e){}};
 map.on('click',function(){info.close();});   /* 点地图空白关闭卡片 */
 
