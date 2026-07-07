@@ -642,6 +642,16 @@ document.querySelectorAll('.tab').forEach(function(t){
 });
 showCity('quanzhou');
 
+/* 实时定位：地图右下角定位按钮，点一下用手机GPS显示"你在哪"（蓝点+精度圈） */
+AMap.plugin('AMap.Geolocation',function(){
+  var geo=new AMap.Geolocation({
+    enableHighAccuracy:true, timeout:10000,
+    showButton:true, buttonPosition:'RB', buttonOffset:new AMap.Pixel(12,20),
+    showMarker:true, showCircle:true, panToLocation:true, zoomToAccuracy:true, GeoLocationFirst:true
+  });
+  map.addControl(geo);
+});
+
 /* 大部分图片已内嵌(data:)，瞬间显示；少数仍为在线图，页面加载后后台预取以加速悬停 */
 setTimeout(function(){
   Object.keys(POI).forEach(function(c){POI[c].forEach(function(p){
