@@ -684,7 +684,7 @@ itinEl.addEventListener('click',function(e){
   if(!mk)return;
   if(_curCity!==city)showCity(city);
   setTimeout(function(){
-    map.setZoomAndCenter(16,mk.getPosition(),false,300);
+    map.setZoomAndCenter(14,mk.getPosition(),false,300);
     info.setContent(buildCard(mk.getExtData().p));
     info.open(map,mk.getPosition());
   },_curCity!==city?350:0);
