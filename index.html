@@ -503,7 +503,7 @@ function buildCard(p){
   var dp=DP[p.n], metaLine='', dishLine='';
   if(dp){var arr=dp.d.split('、'),n=(parseInt(dp.p)>=100)?6:4;
     metaLine='<div class="poi-dp">🍴 '+dp.c+' · 人均￥'+dp.p+'</div>';
-    dishLine=dp.d?'<div class="poi-dish">🍽 推荐菜：'+arr.slice(0,n).join('、')+'</div>':'';
+    dishLine=dp.d?'<div class="poi-dish">🍽 推荐：'+arr.slice(0,n).join('、')+'</div>':'';
   }else if(DISHES[p.n]){dishLine='<div class="poi-dish">🍽 招牌：'+DISHES[p.n]+'</div>';}
   var descHtml=(dp?'':'<div class="poi-desc">'+base+'</div>')+metaLine+dishLine+
     (addr?'<div class="poi-addr">📍 '+addr+'</div>':'');
