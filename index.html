@@ -68,7 +68,11 @@
   /* ---------- marker & tooltip ---------- */
   .mk-in{width:18px;height:18px;line-height:0;transition:transform .12s ease}
   .mk-in{cursor:pointer}
-  .mk-in:hover{transform:scale(1.65)}
+  @media(hover:hover){.mk-in:hover{transform:scale(1.65)}}
+  .poi-pop{position:relative}
+  .poi-x{position:absolute;top:-6px;right:-6px;z-index:5;width:22px;height:22px;border-radius:50%;
+    background:#333;color:#fff;font-size:15px;line-height:22px;text-align:center;cursor:pointer;
+    box-shadow:0 1px 4px rgba(0,0,0,.35)}
   .poi-card{width:210px}
   .poi-card .poi-img.ph{color:#fff;font-weight:700;font-size:13px}
   .poi-card .poi-img{height:110px;border-radius:8px;display:grid;place-items:center;
@@ -85,11 +89,13 @@
   .amap-info-close{display:none}
 
   @media(max-width:820px){
-    html,body{height:auto}
-    .app{flex-direction:column;height:auto;overflow:visible}
-    .left{width:100%;max-width:none;height:auto;order:2;border-right:none}
-    .right{height:auto;order:1;display:block}
-    #map{height:70vh;min-height:380px;flex:none}
+    html,body{height:100%;overflow:hidden}
+    .app{flex-direction:column;height:100vh;height:100dvh;overflow:hidden}
+    /* 上方地图：固定高度、不随页面滚动 */
+    .right{order:1;height:55vh;flex:none;display:flex;flex-direction:column;min-height:0}
+    #map{flex:1;min-height:0;height:auto}
+    /* 下方行程：占剩余约 45%，仅此区域内部滚动 */
+    .left{order:2;flex:1;min-height:0;width:100%;max-width:none;border-right:none;border-top:1px solid var(--line)}
   }
 </style>
 </head>
@@ -124,7 +130,6 @@
       </div>
     </div>
     <div id="map"></div>
-    <div class="note">📍 103 个点全部高德精确定位 + 官方照片（悬停查看）；颜色分类：蓝=景点 红=餐饮 棕=咖啡 绿=民宿 紫=购物。卡片附高德分店名+地址便于核对。点左侧行程地名可跳转；下一步补每日动线与驾车/步行时间。</div>
   </section>
 </div>
 
@@ -485,6 +490,8 @@ setTimeout(function(){map.resize();},400);
 
 /* 悬停信息卡（自定义 InfoWindow，无默认边框） */
 var info=new AMap.InfoWindow({isCustom:true,autoMove:true,offset:new AMap.Pixel(0,-16)});
+window.__closeInfo=function(){try{info.close();}catch(e){}};
+map.on('click',function(){info.close();});   /* 点地图空白关闭卡片 */
 
 function buildCard(p){
   var ty=TYPE[p.t]||{c:'#666'};
@@ -501,7 +508,7 @@ function buildCard(p){
   }else if(DISHES[p.n]){dishLine='<div class="poi-dish">🍽 招牌：'+DISHES[p.n]+'</div>';}
   var descHtml=(dp?'':'<div class="poi-desc">'+base+'</div>')+metaLine+dishLine+
     (addr?'<div class="poi-addr">📍 '+addr+'</div>':'');
-  return '<div class="poi-pop"><div class="poi-card">'+img+
+  return '<div class="poi-pop" onclick="__closeInfo()"><span class="poi-x" onclick="__closeInfo()">×</span><div class="poi-card">'+img+
     '<div class="poi-nm">'+p.n+'</div>'+
     '<span class="poi-badge" style="background:'+ty.c+'">'+p.t+'</span>'+
     (p.approx?'<span class="poi-badge" style="background:#b0a89a">≈ 位置近似</span>':'')+
