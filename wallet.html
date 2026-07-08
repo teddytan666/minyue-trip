@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-cache" />
+<meta http-equiv="Pragma" content="no-cache" />
+<title>麻将天团 · AA 小钱包</title>
+<style>
+  :root{
+    --bg:#f4f1ea; --panel:#fffdf8; --ink:#2b2b2b; --muted:#8a8175; --line:#e7e0d3;
+    --accent:#c65f3d; --green:#2a9d8f; --shadow:0 2px 10px rgba(0,0,0,.07);
+    --font:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0}
+  body{font-family:var(--font);color:var(--ink);background:var(--bg);padding-bottom:40px}
+  .wrap{max-width:560px;margin:0 auto;padding:14px}
+  h1{font-size:18px;margin:6px 2px 2px}
+  .sub{font-size:12px;color:var(--muted);margin:0 2px 12px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px;margin-bottom:12px;box-shadow:var(--shadow)}
+  .card h2{font-size:13px;margin:0 0 10px;color:var(--muted);font-weight:600;letter-spacing:.5px}
+
+  /* 分段切换 */
+  .seg{display:flex;background:#efe9dc;border-radius:10px;padding:3px;gap:3px}
+  .seg button{flex:1;border:none;background:transparent;padding:8px;border-radius:8px;font-size:14px;color:var(--muted);font-weight:600}
+  .seg button.on{background:#fff;color:var(--accent);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+
+  label{font-size:12px;color:var(--muted);display:block;margin:10px 0 5px}
+  .cats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+  .cats button{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:9px 2px;font-size:13px;color:var(--ink)}
+  .cats button.on{border-color:var(--accent);background:#fbeee9;color:var(--accent);font-weight:700}
+  .cats button .e{display:block;font-size:19px;margin-bottom:2px}
+  .payers{display:flex;flex-wrap:wrap;gap:6px}
+  .payers button{border:1.5px solid var(--line);background:#fff;border-radius:20px;padding:6px 14px;font-size:14px}
+  .payers button.on{border-color:var(--green);background:#e7f5f2;color:var(--green);font-weight:700}
+  input[type=text],input[type=number]{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px;font-size:15px;background:#fff;font-family:var(--font)}
+  input:focus{outline:none;border-color:var(--accent)}
+  .row2{display:flex;gap:8px}
+  .row2 .amt{flex:none;width:38%}
+  .addbtn{width:100%;margin-top:11px;border:none;background:var(--accent);color:#fff;padding:13px;border-radius:11px;font-size:16px;font-weight:700}
+  .addbtn:active{opacity:.85}
+
+  /* 汇总 */
+  .total{font-size:30px;font-weight:800;color:var(--accent)}
+  .total small{font-size:14px;font-weight:600;color:var(--muted)}
+  .catgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+  .catbox{border-radius:10px;padding:9px 11px;color:#fff}
+  .catbox .n{font-size:12px;opacity:.9}
+  .catbox .v{font-size:17px;font-weight:700;margin-top:2px}
+  .trippair{display:flex;gap:8px;margin-top:10px}
+  .trippair .t{flex:1;background:#f6f1e6;border-radius:10px;padding:9px 11px}
+  .trippair .t .n{font-size:12px;color:var(--muted)}
+  .trippair .t .v{font-size:16px;font-weight:700}
+  .trippair .t .per{font-size:11px;color:var(--muted)}
+
+  /* 明细 */
+  .empty{color:var(--muted);font-size:13px;text-align:center;padding:14px 0}
+  .item{display:flex;align-items:center;gap:9px;padding:9px 2px;border-top:1px dashed var(--line)}
+  .item:first-child{border-top:none}
+  .item .ic{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-size:16px;flex:none}
+  .item .mid{flex:1;min-width:0}
+  .item .mid .d{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .item .mid .m{font-size:11.5px;color:var(--muted);margin-top:1px}
+  .item .amt{font-weight:700;font-size:15px}
+  .item .del{border:none;background:none;color:#c9c1b4;font-size:19px;padding:2px 4px}
+  .tripbadge{font-size:10px;padding:1px 6px;border-radius:10px;background:#efe9dc;color:var(--muted);margin-right:5px}
+
+  .btnline{display:flex;gap:8px;margin-top:4px}
+  .btnline button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:11px;padding:12px;font-size:14px;font-weight:600;color:var(--ink)}
+  .btnline button.primary{background:var(--green);border-color:var(--green);color:#fff}
+
+  /* 结算 */
+  .setrow{display:flex;align-items:center;gap:9px;padding:8px 2px;border-top:1px dashed var(--line)}
+  .setrow:first-child{border-top:none}
+  .setrow .nm{width:44px;font-weight:700}
+  .setrow .bars{flex:1;font-size:11.5px;color:var(--muted)}
+  .setrow .net{font-weight:800;font-size:15px}
+  .net.pos{color:var(--green)} .net.neg{color:var(--accent)}
+  .transfer{background:#f6f1e6;border-radius:10px;padding:10px 12px;margin-top:8px;font-size:14px;line-height:1.9}
+  .transfer b{color:var(--accent)}
+  .hint{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5}
+  dialog{border:none;border-radius:14px;padding:16px;max-width:90%;box-shadow:0 8px 40px rgba(0,0,0,.3)}
+  dialog::backdrop{background:rgba(0,0,0,.4)}
+  .share-url{word-break:break-all;font-size:11px;background:#f4f1ea;border-radius:8px;padding:8px;margin:8px 0;max-height:120px;overflow:auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>💰 麻将天团 · AA 小钱包</h1>
+  <p class="sub">泉州 5 人（键·茵·玟·萍·华）· 潮汕 6 人（+红）· 两段行程各自 AA</p>
+
+  <!-- 记一笔 -->
+  <div class="card">
+    <h2>记一笔</h2>
+    <div class="seg" id="tripSeg"></div>
+    <label>付款人</label>
+    <div class="payers" id="payers"></div>
+    <label>类别</label>
+    <div class="cats" id="cats"></div>
+    <div class="row2" style="margin-top:10px">
+      <input type="text" id="detail" placeholder="明细（如：午餐、打车…）" />
+      <input type="number" id="amount" class="amt" inputmode="decimal" placeholder="¥金额" />
+    </div>
+    <button class="addbtn" id="addBtn">＋ 添加</button>
+  </div>
+
+  <!-- 汇总 -->
+  <div class="card">
+    <h2>汇总</h2>
+    <div class="total" id="grand">¥0.00 <small>总费用</small></div>
+    <div class="catgrid" id="catSummary"></div>
+    <div class="trippair" id="tripSummary"></div>
+  </div>
+
+  <!-- 明细 -->
+  <div class="card">
+    <h2>明细 <span id="cnt" style="color:var(--muted);font-weight:400"></span></h2>
+    <div id="list"></div>
+  </div>
+
+  <!-- 结算 -->
+  <div class="card">
+    <h2>结算</h2>
+    <div id="settle"><div class="empty">点下方「计算结算」查看每人应付/应收</div></div>
+    <div class="btnline">
+      <button id="calcBtn" class="primary">🧮 计算结算</button>
+      <button id="shareBtn">🔗 生成分享链接</button>
+    </div>
+    <div class="btnline" style="margin-top:8px">
+      <button id="clearBtn" style="color:#c0392b">🗑 清空账本</button>
+    </div>
+    <p class="hint">数据保存在本机浏览器。想让朋友看到最新账本，点「生成分享链接」发到群里；对方打开即同步这份账本。</p>
+  </div>
+</div>
+
+<dialog id="shareDlg">
+  <div style="font-weight:700;margin-bottom:4px">分享链接已复制</div>
+  <div style="font-size:12.5px;color:#666">发到微信群，朋友打开即可看到这份账本。</div>
+  <div class="share-url" id="shareUrl"></div>
+  <button class="addbtn" onclick="document.getElementById('shareDlg').close()" style="background:var(--green)">好</button>
+</dialog>
+
+<script>
+var TRIPS={qz:{name:'泉州',members:['键','茵','玟','萍','华']},cs:{name:'潮汕',members:['键','茵','玟','萍','华','红']}};
+var CATS=[{k:'餐饮',e:'🍜',c:'#e14b4b'},{k:'交通',e:'🚗',c:'#2d7dd2'},{k:'住宿',e:'🏨',c:'#2a9d8f'},{k:'购物',e:'🛍️',c:'#9b5de5'}];
+var catColor={}; CATS.forEach(function(c){catColor[c.k]=c.c;});
+var catEmoji={}; CATS.forEach(function(c){catEmoji[c.k]=c.e;});
+var KEY='mahjong_wallet_v1';
+
+var state={items:[]};
+var cur={trip:'qz',payer:null,cat:'餐饮'};
+
+function load(){
+  // 优先读分享链接里的数据
+  var m=location.hash.match(/d=([^&]+)/);
+  if(m){ try{ var j=JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(m[1]))))); if(j&&j.items){ state=j; save(); return; } }catch(e){} }
+  try{ var s=localStorage.getItem(KEY); if(s) state=JSON.parse(s); }catch(e){}
+}
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
+function money(n){ return '¥'+(Math.round(n*100)/100).toFixed(2); }
+
+function renderControls(){
+  // 行程分段
+  var seg=document.getElementById('tripSeg'); seg.innerHTML='';
+  ['qz','cs'].forEach(function(t){
+    var b=document.createElement('button'); b.textContent=TRIPS[t].name+'（'+TRIPS[t].members.length+'人）';
+    if(cur.trip===t)b.className='on';
+    b.onclick=function(){ cur.trip=t; if(TRIPS[t].members.indexOf(cur.payer)<0)cur.payer=null; renderControls(); };
+    seg.appendChild(b);
+  });
+  // 付款人
+  var pc=document.getElementById('payers'); pc.innerHTML='';
+  TRIPS[cur.trip].members.forEach(function(nm){
+    var b=document.createElement('button'); b.textContent=nm; if(cur.payer===nm)b.className='on';
+    b.onclick=function(){ cur.payer=nm; renderControls(); };
+    pc.appendChild(b);
+  });
+  // 类别
+  var cc=document.getElementById('cats'); cc.innerHTML='';
+  CATS.forEach(function(c){
+    var b=document.createElement('button'); b.innerHTML='<span class="e">'+c.e+'</span>'+c.k; if(cur.cat===c.k)b.className='on';
+    b.onclick=function(){ cur.cat=c.k; renderControls(); };
+    cc.appendChild(b);
+  });
+}
+
+function renderSummary(){
+  var grand=0, catT={餐饮:0,交通:0,住宿:0,购物:0}, tripT={qz:0,cs:0};
+  state.items.forEach(function(it){ grand+=it.amt; catT[it.cat]+=it.amt; tripT[it.trip]+=it.amt; });
+  document.getElementById('grand').innerHTML=money(grand)+' <small>总费用</small>';
+  var cs=document.getElementById('catSummary'); cs.innerHTML='';
+  CATS.forEach(function(c){
+    var d=document.createElement('div'); d.className='catbox'; d.style.background=c.c;
+    d.innerHTML='<div class="n">'+c.e+' '+c.k+'</div><div class="v">'+money(catT[c.k])+'</div>';
+    cs.appendChild(d);
+  });
+  var ts=document.getElementById('tripSummary'); ts.innerHTML='';
+  ['qz','cs'].forEach(function(t){
+    var per=tripT[t]/TRIPS[t].members.length;
+    var d=document.createElement('div'); d.className='t';
+    d.innerHTML='<div class="n">'+TRIPS[t].name+' · '+TRIPS[t].members.length+'人</div><div class="v">'+money(tripT[t])+'</div><div class="per">人均 '+money(per)+'</div>';
+    ts.appendChild(d);
+  });
+}
+
+function renderList(){
+  var l=document.getElementById('list'); l.innerHTML='';
+  document.getElementById('cnt').textContent=state.items.length?('· '+state.items.length+' 笔'):'';
+  if(!state.items.length){ l.innerHTML='<div class="empty">还没有记账，上面记一笔吧～</div>'; return; }
+  state.items.slice().reverse().forEach(function(it){
+    var row=document.createElement('div'); row.className='item';
+    row.innerHTML=
+      '<div class="ic" style="background:'+catColor[it.cat]+'22">'+catEmoji[it.cat]+'</div>'+
+      '<div class="mid"><div class="d">'+(it.detail||it.cat)+'</div>'+
+      '<div class="m"><span class="tripbadge">'+TRIPS[it.trip].name+'</span>'+it.payer+' 付 · '+it.cat+'</div></div>'+
+      '<div class="amt">'+money(it.amt)+'</div>'+
+      '<button class="del" data-id="'+it.id+'">×</button>';
+    row.querySelector('.del').onclick=function(){ state.items=state.items.filter(function(x){return x.id!=it.id;}); save(); renderAll(); };
+    l.appendChild(row);
+  });
+}
+
+function renderAll(){ renderControls(); renderSummary(); renderList(); }
+
+function add(){
+  var amt=parseFloat(document.getElementById('amount').value);
+  if(!cur.payer){ alert('请选择付款人'); return; }
+  if(!(amt>0)){ alert('请输入正确金额'); return; }
+  state.items.push({id:Date.now()+''+Math.floor(Math.random()*1000),trip:cur.trip,payer:cur.payer,cat:cur.cat,detail:document.getElementById('detail').value.trim(),amt:amt});
+  save();
+  document.getElementById('detail').value=''; document.getElementById('amount').value='';
+  renderAll();
+}
+
+function settle(){
+  // 每人应摊：按各段人均累加
+  var tripT={qz:0,cs:0}; state.items.forEach(function(it){ tripT[it.trip]+=it.amt; });
+  var owed={}, paid={};
+  // 所有出现过的成员（两段并集）
+  var all=[]; ['qz','cs'].forEach(function(t){ TRIPS[t].members.forEach(function(m){ if(all.indexOf(m)<0)all.push(m); }); });
+  all.forEach(function(m){ owed[m]=0; paid[m]=0; });
+  ['qz','cs'].forEach(function(t){ var per=tripT[t]/TRIPS[t].members.length; TRIPS[t].members.forEach(function(m){ owed[m]+=per; }); });
+  state.items.forEach(function(it){ paid[it.payer]+=it.amt; });
+
+  var net={}; all.forEach(function(m){ net[m]=paid[m]-owed[m]; });
+
+  var box=document.getElementById('settle'); box.innerHTML='';
+  all.forEach(function(m){
+    var r=document.createElement('div'); r.className='setrow';
+    var cls=net[m]>0.005?'pos':(net[m]<-0.005?'neg':'');
+    var tag=net[m]>0.005?'应收':(net[m]<-0.005?'应付':'已平');
+    r.innerHTML='<div class="nm">'+m+'</div>'+
+      '<div class="bars">已付 '+money(paid[m])+' · 应摊 '+money(owed[m])+'</div>'+
+      '<div class="net '+cls+'">'+(net[m]>=0?'+':'')+money(net[m]).replace("¥","¥")+'<div style="font-size:10px;text-align:right">'+tag+'</div></div>';
+    box.appendChild(r);
+  });
+
+  // 建议转账（贪心）
+  var creds=[],debts=[];
+  all.forEach(function(m){ if(net[m]>0.005)creds.push({m:m,v:net[m]}); else if(net[m]<-0.005)debts.push({m:m,v:-net[m]}); });
+  creds.sort(function(a,b){return b.v-a.v;}); debts.sort(function(a,b){return b.v-a.v;});
+  var tr=[],i=0,j=0;
+  while(i<debts.length&&j<creds.length){
+    var pay=Math.min(debts[i].v,creds[j].v);
+    tr.push(debts[i].m+' → '+creds[j].m+' <b>'+money(pay)+'</b>');
+    debts[i].v-=pay; creds[j].v-=pay;
+    if(debts[i].v<0.005)i++; if(creds[j].v<0.005)j++;
+  }
+  var td=document.createElement('div'); td.className='transfer';
+  td.innerHTML='<div style="font-size:12px;color:#8a8175;margin-bottom:4px">💸 建议转账</div>'+(tr.length?tr.join('<br>'):'大家已平，无需转账');
+  box.appendChild(td);
+}
+
+function share(){
+  var payload=btoa(unescape(encodeURIComponent(JSON.stringify(state))));
+  var url=location.origin+location.pathname+'#d='+encodeURIComponent(payload);
+  var dlg=document.getElementById('shareDlg');
+  document.getElementById('shareUrl').textContent=url;
+  if(navigator.clipboard){ navigator.clipboard.writeText(url).catch(function(){}); }
+  dlg.showModal();
+}
+
+document.getElementById('addBtn').onclick=add;
+document.getElementById('amount').addEventListener('keydown',function(e){ if(e.key==='Enter')add(); });
+document.getElementById('calcBtn').onclick=settle;
+document.getElementById('shareBtn').onclick=share;
+document.getElementById('clearBtn').onclick=function(){ if(confirm('确定清空所有账本？此操作不可恢复')){ state={items:[]}; save(); location.hash=''; renderAll(); document.getElementById('settle').innerHTML='<div class="empty">已清空</div>'; } };
+
+load(); renderAll();
+if(state.items.length) settle();
+</script>
+</body>
+</html>
